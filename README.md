@@ -111,12 +111,15 @@ PEN FIGHT/
    # Using Python 3
    python -m http.server 8080
 
-   # Using Node.js http-server
-   npx http-server -p 8080
-   ```
-4. Open `http://localhost:8080` in any modern web browser (Chrome, Firefox, Edge, Safari).
+### Netlify Deployment
 
----
+This repository is pre-configured for instant 1-click deployment on Netlify via `netlify.toml`:
+
+1. Sign in to [Netlify](https://app.netlify.com/).
+2. Click **"Add new site" > "Import an existing project"**.
+3. Connect your GitHub account and select the repository **`Nadim1341/Pen-fighgt-game`**.
+4. Leave build settings at default (Publish directory: `.`).
+5. Click **"Deploy Pen-fighgt-game"**. Your game will be instantly live on a secure HTTPS custom subdomain (e.g., `https://pen-fight-game.netlify.app`).
 
 ## Controls & How to Play
 
