@@ -337,23 +337,33 @@ class PenFightGame {
     const bounds = this.desk.getPlayableBounds();
     const bw = bounds.maxX - bounds.minX;
     const bh = bounds.maxY - bounds.minY;
+    const isPortrait = bh > bw;
 
-    // Left side (Player 1) vs Right side (Player 2 / Bot) facing each other across the long horizontal bench
-    const p1 = new Pen(
-      p1Preset,
-      bounds.minX + bw * 0.22,
-      bounds.minY + bh * 0.52,
-      0,
-      'player1'
-    );
+    let p1X, p1Y, p1Angle;
+    let p2X, p2Y, p2Angle;
 
-    const p2 = new Pen(
-      p2Preset,
-      bounds.minX + bw * 0.78,
-      bounds.minY + bh * 0.48,
-      Math.PI,
-      this.mode === 'TWO_PLAYER' ? 'player2' : 'ai'
-    );
+    if (isPortrait) {
+      // Portrait smartphone mode: Vertical battle along the long table
+      p1X = bounds.minX + bw * 0.50;
+      p1Y = bounds.minY + bh * 0.75;
+      p1Angle = -Math.PI / 2;
+
+      p2X = bounds.minX + bw * 0.50;
+      p2Y = bounds.minY + bh * 0.25;
+      p2Angle = Math.PI / 2;
+    } else {
+      // Landscape PC / widescreen mode: Horizontal battle
+      p1X = bounds.minX + bw * 0.22;
+      p1Y = bounds.minY + bh * 0.52;
+      p1Angle = 0;
+
+      p2X = bounds.minX + bw * 0.78;
+      p2Y = bounds.minY + bh * 0.48;
+      p2Angle = Math.PI;
+    }
+
+    const p1 = new Pen(p1Preset, p1X, p1Y, p1Angle, 'player1');
+    const p2 = new Pen(p2Preset, p2X, p2Y, p2Angle, this.mode === 'TWO_PLAYER' ? 'player2' : 'ai');
 
     this.pens.push(p1, p2);
   }

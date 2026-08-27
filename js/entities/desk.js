@@ -37,22 +37,32 @@ export class Desk {
   }
 
   calculateBounds() {
-    const isMobile = this.width < 700;
+    const isMobile = this.width < 768;
+    const isPortrait = this.height > this.width;
 
-    // Classic wide horizontal school high-bench
-    let deskW = isMobile
-      ? Math.min(this.width * 0.92, 680)
-      : Math.min(this.width * 0.84, 980);
+    let deskW;
+    let deskH;
+    let topMargin;
+
+    if (isPortrait) {
+      // Full expansive high-bench for mobile portrait screens (just as large and grand as on PC)
+      deskW = Math.min(this.width * 0.95, 680);
+      deskH = Math.min(this.height * 0.76, this.height - 95);
+      topMargin = Math.max(68, (this.height - deskH) * 0.40);
+    } else if (isMobile) {
+      // Mobile landscape screens
+      deskW = Math.min(this.width * 0.92, 780);
+      deskH = Math.min(this.height * 0.76, 500);
+      topMargin = Math.max(48, (this.height - deskH) / 2);
+    } else {
+      // Desktop / Tablet widescreen (Huge, prominent wooden bench)
+      deskW = Math.min(this.width * 0.88, 1060);
+      deskH = Math.min(this.height * 0.68, 580);
+      topMargin = Math.max(82, (this.height - deskH) / 2 + 10);
+    }
 
     const minX = (this.width - deskW) / 2;
     const maxX = minX + deskW;
-
-    // Height of high-bench table
-    let deskH = isMobile
-      ? Math.min(this.height * 0.60, 440)
-      : Math.min(this.height * 0.64, 520);
-
-    const topMargin = Math.max(92, (this.height - deskH) / 2 + 15);
     const minY = topMargin;
     const maxY = minY + deskH;
 
