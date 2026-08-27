@@ -46,19 +46,19 @@ export class Desk {
 
     if (isPortrait) {
       // Full expansive high-bench for mobile portrait screens (just as large and grand as on PC)
-      deskW = Math.min(this.width * 0.95, 680);
-      deskH = Math.min(this.height * 0.76, this.height - 95);
-      topMargin = Math.max(68, (this.height - deskH) * 0.40);
+      deskW = Math.min(this.width * 0.94, 680);
+      topMargin = 122; // Clean clearance below the 48px top HUD and 56px chalkboard
+      deskH = Math.min(this.height - topMargin - 30, 750);
     } else if (isMobile) {
       // Mobile landscape screens
-      deskW = Math.min(this.width * 0.92, 780);
-      deskH = Math.min(this.height * 0.76, 500);
-      topMargin = Math.max(48, (this.height - deskH) / 2);
+      deskW = Math.min(this.width * 0.90, 820);
+      deskH = Math.min(this.height * 0.72, 460);
+      topMargin = Math.max(54, (this.height - deskH) / 2 + 8);
     } else {
       // Desktop / Tablet widescreen (Huge, prominent wooden bench)
       deskW = Math.min(this.width * 0.88, 1060);
       deskH = Math.min(this.height * 0.68, 580);
-      topMargin = Math.max(82, (this.height - deskH) / 2 + 10);
+      topMargin = Math.max(88, (this.height - deskH) / 2 + 15);
     }
 
     const minX = (this.width - deskW) / 2;
@@ -332,9 +332,12 @@ export class Desk {
     const w = this.width;
     const isMobile = w < 620;
     const boardW = isMobile ? Math.min(w * 0.94, 580) : Math.min(w * 0.72, 600);
-    const boardH = Math.max(56, wallH * 0.82);
+    
+    // Position blackboard cleanly below the 48px top HUD (Zero overlap)
+    const hudHeight = 48;
+    const boardY = isMobile ? hudHeight + 6 : Math.max(hudHeight + 6, (wallH - 54) / 2);
+    const boardH = isMobile ? Math.min(50, bounds.minY - boardY - 10) : Math.max(54, wallH * 0.80);
     const boardX = (w - boardW) / 2;
-    const boardY = Math.max(6, (wallH - boardH) / 2);
 
     // Wooden Blackboard Frame
     ctx.fillStyle = '#3e230e';

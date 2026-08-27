@@ -147,13 +147,15 @@ export class BotAI {
       aimDir = Vector2D.sub(playerPen.pos, aiPen.pos).normalize().rotate(angleJitter);
 
       // 3. Smart Power Calculation (Calculated for lethal push without flying off)
-      const baseForce = Math.max(280, distToPlayer * 2.5 * (aiPen.mass / playerPen.mass));
+      const deskDiag = Math.hypot(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY);
+      const distRatio = Math.min(1.0, distToPlayer / (deskDiag * 0.65));
+      const baseForce = aiPen.maxPower * (0.35 + distRatio * 0.50) * (aiPen.mass / playerPen.mass);
       const powerMultiplier = 1 + (Math.random() - 0.5) * this.personality.powerVariance;
-      finalPower = Math.min(aiPen.maxPower * 0.98, baseForce * powerMultiplier);
+      finalPower = Math.min(aiPen.maxPower * 0.95, baseForce * powerMultiplier);
 
       // If player is close to the edge, deliver decisive push!
-      if (minDist < 100) {
-        finalPower = Math.min(aiPen.maxPower, finalPower * 1.3);
+      if (minDist < 70) {
+        finalPower = Math.min(aiPen.maxPower, finalPower * 1.15);
       }
 
       // 4. Contact point leverage for spin torque

@@ -283,15 +283,18 @@ export class Pen {
     this.angle = angle;
     this.angVel = 0;
 
-    this.length = this.preset.length;
-    this.radius = this.preset.radius;
+    const screenScale = typeof window !== 'undefined' ? Math.min(1.0, Math.max(0.68, window.innerWidth / 700)) : 1.0;
+    this.scale = screenScale;
+
+    this.length = this.preset.length * this.scale;
+    this.radius = this.preset.radius * this.scale;
     this.mass = this.preset.mass;
     this.inertia = (this.mass * (this.length * this.length + 4 * this.radius * this.radius)) / 12;
 
     this.friction = this.preset.friction;
     this.angularDamping = this.preset.angularDamping;
     this.restitution = this.preset.restitution;
-    this.maxPower = this.preset.maxPower;
+    this.maxPower = this.preset.maxPower * (this.scale < 1 ? (0.75 + 0.25 * this.scale) : 1.0);
     this.spinFactor = this.preset.spinFactor;
     this.knockback = this.preset.knockback;
 
