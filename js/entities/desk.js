@@ -320,10 +320,11 @@ export class Desk {
   drawTopChalkboard(ctx, bounds, wallH, gameState) {
     ctx.save();
     const w = this.width;
-    const boardW = Math.min(w * 0.72, 600);
-    const boardH = Math.max(65, wallH * 0.82);
+    const isMobile = w < 620;
+    const boardW = isMobile ? Math.min(w * 0.94, 580) : Math.min(w * 0.72, 600);
+    const boardH = Math.max(56, wallH * 0.82);
     const boardX = (w - boardW) / 2;
-    const boardY = Math.max(8, (wallH - boardH) / 2);
+    const boardY = Math.max(6, (wallH - boardH) / 2);
 
     // Wooden Blackboard Frame
     ctx.fillStyle = '#3e230e';
@@ -348,7 +349,7 @@ export class Desk {
     // White & colored chalk sticks on tray
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(boardX + 22, boardY + boardH + 1, 12, 2.5);
-    ctx.fillStyle = '#ffee58';
+    ctx.fillStyle = '#a8e6cf';
     ctx.fillRect(boardX + 38, boardY + boardH + 1, 10, 2.5);
     ctx.fillStyle = '#f48fb1';
     ctx.fillRect(boardX + 52, boardY + boardH + 1, 9, 2.5);
@@ -365,74 +366,126 @@ export class Desk {
     const isTwoPlayer = gameState && gameState.mode === 'TWO_PLAYER';
     const targetScore = (gameState && gameState.targetScore) || 3;
 
-    // Column 1: Live Scoreboard (Clean live chalk points)
-    ctx.fillStyle = 'rgba(184, 242, 210, 0.95)';
-    ctx.font = 'bold 11.5px "Lora", "Noto Serif Bengali", serif';
-    ctx.textAlign = 'left';
-    ctx.fillText('PEN FIGHT SCORE', boardX + 16, boardY + 18);
+    if (isMobile) {
+      // Compact Mobile Layout (Zero overlap)
+      ctx.fillStyle = 'rgba(184, 242, 210, 0.95)';
+      ctx.font = 'bold 11px "Lora", "Noto Serif Bengali", serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('SCORE', boardX + 12, boardY + 16);
 
-    // Player 1 Row with Live Score Number
-    ctx.fillStyle = 'rgba(245, 238, 220, 0.95)';
-    ctx.font = 'bold 11.5px "Noto Serif Bengali", "Lora", serif';
-    ctx.fillText(`প্লেয়ার ১ : ${p1Score}`, boardX + 16, boardY + 38);
+      // Player 1 Row
+      ctx.fillStyle = 'rgba(245, 238, 220, 0.95)';
+      ctx.font = 'bold 10px "Noto Serif Bengali", "Lora", serif';
+      ctx.fillText(`P1: ${p1Score}`, boardX + 12, boardY + 34);
 
-    // Player 1 Tally Score Boxes
-    for (let i = 0; i < targetScore; i++) {
-      const boxX = boardX + 86 + i * 13;
-      const boxY = boardY + 28;
-      ctx.strokeStyle = 'rgba(245, 238, 220, 0.45)';
-      ctx.lineWidth = 1.2;
-      ctx.strokeRect(boxX, boxY, 9, 9);
-      if (i < p1Score) {
-        ctx.fillStyle = '#7ecba1';
-        ctx.fillRect(boxX + 1.5, boxY + 1.5, 6, 6);
+      for (let i = 0; i < targetScore; i++) {
+        const boxX = boardX + 56 + i * 12;
+        const boxY = boardY + 25;
+        ctx.strokeStyle = 'rgba(245, 238, 220, 0.45)';
+        ctx.lineWidth = 1.1;
+        ctx.strokeRect(boxX, boxY, 8, 8);
+        if (i < p1Score) {
+          ctx.fillStyle = '#7ecba1';
+          ctx.fillRect(boxX + 1.5, boxY + 1.5, 5, 5);
+        }
       }
-    }
 
-    // Player 2 / Opponent Row with Live Score Number
-    const p2Label = isTwoPlayer ? 'প্লেয়ার ২' : 'প্রতিপক্ষ';
-    ctx.fillStyle = 'rgba(245, 238, 220, 0.95)';
-    ctx.fillText(`${p2Label} : ${p2Score}`, boardX + 16, boardY + 56);
+      // Player 2 / Bot Row
+      ctx.fillStyle = 'rgba(245, 238, 220, 0.95)';
+      ctx.fillText(`${isTwoPlayer ? 'P2' : 'BOT'}: ${p2Score}`, boardX + 12, boardY + 49);
 
-    // Player 2 Tally Score Boxes
-    for (let i = 0; i < targetScore; i++) {
-      const boxX = boardX + 86 + i * 13;
-      const boxY = boardY + 46;
-      ctx.strokeStyle = 'rgba(245, 238, 220, 0.45)';
-      ctx.lineWidth = 1.2;
-      ctx.strokeRect(boxX, boxY, 9, 9);
-      if (i < p2Score) {
-        ctx.fillStyle = '#7ecba1';
-        ctx.fillRect(boxX + 1.5, boxY + 1.5, 6, 6);
+      for (let i = 0; i < targetScore; i++) {
+        const boxX = boardX + 56 + i * 12;
+        const boxY = boardY + 40;
+        ctx.strokeStyle = 'rgba(245, 238, 220, 0.45)';
+        ctx.lineWidth = 1.1;
+        ctx.strokeRect(boxX, boxY, 8, 8);
+        if (i < p2Score) {
+          ctx.fillStyle = '#7ecba1';
+          ctx.fillRect(boxX + 1.5, boxY + 1.5, 5, 5);
+        }
       }
+
+      // Daily Quote on Right
+      ctx.fillStyle = 'rgba(184, 242, 210, 0.90)';
+      ctx.font = 'italic 10px "Noto Serif Bengali", "Lora", serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('"দাইন দাইন তিন দাইন"', boardX + boardW - 12, boardY + 28);
+      ctx.fillStyle = 'rgba(245, 238, 220, 0.6)';
+      ctx.font = '9px "Lora", serif';
+      ctx.fillText(`Target: ${targetScore} pts`, boardX + boardW - 12, boardY + 45);
+    } else {
+      // Desktop / Tablet 3-Column Layout
+      // Column 1: Live Scoreboard (Clean live chalk points)
+      ctx.fillStyle = 'rgba(184, 242, 210, 0.95)';
+      ctx.font = 'bold 11.5px "Lora", "Noto Serif Bengali", serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('PEN FIGHT SCORE', boardX + 16, boardY + 18);
+
+      // Player 1 Row with Live Score Number
+      ctx.fillStyle = 'rgba(245, 238, 220, 0.95)';
+      ctx.font = 'bold 11.5px "Noto Serif Bengali", "Lora", serif';
+      ctx.fillText(`প্লেয়ার ১ : ${p1Score}`, boardX + 16, boardY + 38);
+
+      // Player 1 Tally Score Boxes
+      for (let i = 0; i < targetScore; i++) {
+        const boxX = boardX + 86 + i * 13;
+        const boxY = boardY + 28;
+        ctx.strokeStyle = 'rgba(245, 238, 220, 0.45)';
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(boxX, boxY, 9, 9);
+        if (i < p1Score) {
+          ctx.fillStyle = '#7ecba1';
+          ctx.fillRect(boxX + 1.5, boxY + 1.5, 6, 6);
+        }
+      }
+
+      // Player 2 / Opponent Row with Live Score Number
+      const p2Label = isTwoPlayer ? 'প্লেয়ার ২' : 'প্রতিপক্ষ';
+      ctx.fillStyle = 'rgba(245, 238, 220, 0.95)';
+      ctx.fillText(`${p2Label} : ${p2Score}`, boardX + 16, boardY + 56);
+
+      // Player 2 Tally Score Boxes
+      for (let i = 0; i < targetScore; i++) {
+        const boxX = boardX + 86 + i * 13;
+        const boxY = boardY + 46;
+        ctx.strokeStyle = 'rgba(245, 238, 220, 0.45)';
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(boxX, boxY, 9, 9);
+        if (i < p2Score) {
+          ctx.fillStyle = '#7ecba1';
+          ctx.fillRect(boxX + 1.5, boxY + 1.5, 6, 6);
+        }
+      }
+
+      // Column 2: Thought for the Day (Center)
+      ctx.fillStyle = 'rgba(184, 242, 210, 0.95)';
+      ctx.font = 'bold 10.5px "Lora", serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Thought for the Day :', boardX + boardW * 0.54, boardY + 20);
+
+      ctx.fillStyle = 'rgba(245, 238, 220, 0.85)';
+      ctx.font = 'italic 10px "Lora", serif';
+      ctx.fillText('"Practice makes a man perfect"', boardX + boardW * 0.54, boardY + 36);
+
+      // Column 3: Geometry Triangle & Match Status (Right)
+      ctx.strokeStyle = 'rgba(245, 238, 220, 0.35)';
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.moveTo(boardX + boardW - 48, boardY + 48);
+      ctx.lineTo(boardX + boardW - 28, boardY + 16);
+      ctx.lineTo(boardX + boardW - 10, boardY + 48);
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(245, 238, 220, 0.6)';
+      ctx.font = '9px "Lora", serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('Match: 1v1', boardX + boardW - 55, boardY + 56);
     }
-
-    // Column 2: Thought for the Day (Center)
-    ctx.fillStyle = 'rgba(184, 242, 210, 0.95)';
-    ctx.font = 'bold 10.5px "Lora", serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Thought for the Day :', boardX + boardW * 0.54, boardY + 20);
-
-    ctx.fillStyle = 'rgba(245, 238, 220, 0.85)';
-    ctx.font = 'italic 10px "Lora", serif';
-    ctx.fillText('"Practice makes a man perfect"', boardX + boardW * 0.54, boardY + 36);
-
-    // Column 3: Geometry Triangle & Match Status (Right)
-    ctx.strokeStyle = 'rgba(245, 238, 220, 0.35)';
-    ctx.lineWidth = 1.1;
-    ctx.beginPath();
-    ctx.moveTo(boardX + boardW - 48, boardY + 48);
-    ctx.lineTo(boardX + boardW - 28, boardY + 16);
-    ctx.lineTo(boardX + boardW - 10, boardY + 48);
-    ctx.closePath();
-    ctx.stroke();
-
-    ctx.fillStyle = 'rgba(245, 238, 220, 0.6)';
-    ctx.font = '9px "Lora", serif';
-    ctx.textAlign = 'right';
-    ctx.fillText('Match: 1v1', boardX + boardW - 55, boardY + 56);
 
     ctx.restore();
+  }
   }
 
   drawFrontBenchSeat(ctx, bounds) {

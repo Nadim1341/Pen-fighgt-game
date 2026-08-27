@@ -559,11 +559,12 @@ export class ClassroomIntro {
         this.drawSunbeams(ctx, w * 0.04 + winW * 0.5, h * 0.12, w * 0.45, h * 0.65);
       }
 
-      // 4. Blackboard
-      const boardW = Math.min(w * 0.48, 580);
-      const boardH = h * 0.38;
+      // 4. Blackboard (Responsive on both Mobile & Desktop)
+      const isMobile = w < 768;
+      const boardW = isMobile ? Math.min(w * 0.88, 560) : Math.min(w * 0.48, 580);
+      const boardH = isMobile ? Math.min(h * 0.32, 220) : h * 0.38;
       const boardX = (w - boardW) / 2;
-      const boardY = h * 0.06;
+      const boardY = isMobile ? Math.max(46, h * 0.08) : h * 0.06;
       this.drawChalkboard(ctx, boardX, boardY, boardW, boardH);
 
       // 5. Map & Bell
@@ -1109,25 +1110,25 @@ export class ClassroomIntro {
     const quote = this.chalkQuotes[this.chalkQuoteIndex] || this.chalkQuotes[0];
 
     ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-    ctx.font = `bold ${Math.max(13, w * 0.040)}px "Noto Serif Bengali", "Lora", serif`;
+    ctx.font = `bold ${Math.max(12, Math.min(18, w * 0.038))}px "Noto Serif Bengali", "Lora", serif`;
     ctx.textAlign = 'center';
     ctx.fillText(quote.titleBN, x + w / 2, y + h * 0.20);
 
     ctx.fillStyle = 'rgba(184, 242, 210, 0.95)';
-    ctx.font = `bold ${Math.max(11, w * 0.032)}px "Noto Serif Bengali", "Lora", serif`;
+    ctx.font = `bold ${Math.max(10.5, Math.min(15, w * 0.030))}px "Noto Serif Bengali", "Lora", serif`;
     ctx.fillText(quote.subBN, x + w / 2, y + h * 0.40);
 
     ctx.fillStyle = 'rgba(240, 235, 220, 0.75)';
-    ctx.font = `${Math.max(10, w * 0.025)}px "Noto Serif Bengali", "Lora", serif`;
+    ctx.font = `${Math.max(9.5, Math.min(13, w * 0.024))}px "Noto Serif Bengali", "Lora", serif`;
     ctx.fillText(quote.extraBN, x + w / 2, y + h * 0.58);
 
     ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
-    ctx.font = `${Math.max(9, w * 0.022)}px monospace`;
+    ctx.font = `${Math.max(8.5, Math.min(12, w * 0.022))}px monospace`;
     ctx.fillText('(a+b)² = a² + 2ab + b²', x + w * 0.26, y + h * 0.78);
     ctx.fillText('sin²θ + cos²θ = 1', x + w * 0.74, y + h * 0.78);
 
     ctx.fillStyle = 'rgba(133, 220, 176, 0.90)';
-    ctx.font = `bold ${Math.max(8.5, w * 0.020)}px "Noto Serif Bengali", "Lora", serif`;
+    ctx.font = `bold ${Math.max(8.5, Math.min(11.5, w * 0.020))}px "Noto Serif Bengali", "Lora", serif`;
     ctx.fillText('(ক্লিক করে ডাস্টার দিয়ে বোর্ড মুছুন ও নতুন উক্তি আনুন)', x + w / 2, y + h * 0.92);
 
     ctx.restore();
