@@ -960,3 +960,122 @@ html, body {
   from { opacity: 0; transform: scale(0.94); }
   to { opacity: 1; transform: scale(1); }
 }
+
+/* ==================== Mobile Touch & Screen Optimizations (iOS / Android) ==================== */
+* {
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 680px) {
+  #hud {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .penfight-logo-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+    letter-spacing: 1px;
+  }
+
+  .hud-pen-tag {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .btn-hud-pill {
+    padding: 5px 8px;
+    font-size: 11px;
+    gap: 3px;
+  }
+
+  .modal-card {
+    padding: 22px 16px;
+    width: 95%;
+    max-height: 92vh;
+  }
+
+  .modal-header h2 {
+    font-size: 20px;
+  }
+
+  .modal-header p {
+    font-size: 12px;
+  }
+
+  .btn-menu {
+    padding: 13px 14px;
+    font-size: 13.5px;
+  }
+
+  .tour-action-bar {
+    gap: 5px;
+    padding: 6px 10px;
+  }
+
+  .btn-tour-action {
+    padding: 6px 9px;
+    font-size: 11.5px;
+  }
+
+  .tour-badge {
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+
+  .tour-hint {
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+
+  .dain-dain-banner {
+    font-size: 18px;
+    padding: 10px 14px;
+  }
+
+  .victory-title, .defeat-title {
+    font-size: 20px !important;
+  }
+}
+
+/* Landscape Mode on Phones */
+@media (max-height: 520px) {
+  .modal-card {
+    padding: 16px 20px;
+    max-height: 94vh;
+  }
+
+  .modal-header {
+    margin-bottom: 12px;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+  }
+
+  .menu-options {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .btn-menu {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .tour-bottom-container {
+    gap: 4px;
+    margin-bottom: 2px;
+  }
+
+  .tour-action-bar {
+    padding: 4px 10px;
+    gap: 4px;
+  }
+
+  .btn-tour-action {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}
