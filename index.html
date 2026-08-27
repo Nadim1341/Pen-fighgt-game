@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>স্কুল লাইফ পেন ফাইট | School Days: Pen Fight</title>
+  <meta name="description" content="Nostalgic Bangladeshi School Days Pen Fight physics web game. Play with Matador All-rounder, Econo DX, Olympic Gel, Hero Fountain pens on a wooden high-bench.">
+  
+  <!-- Classic Typography: Noto Serif Bengali, Lora, Cinzel, Special Elite -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+Bengali:wght@400;500;600;700;800&family=Special+Elite&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="game-container">
+    <!-- Main Interactive Canvas -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Top In-Game HUD -->
+    <div id="hud">
+      <div class="hud-left">
+        <div class="penfight-logo-badge">PEN FIGHT</div>
+        <div id="active-pen-tag" class="hud-pen-tag">Reynolds 045</div>
+      </div>
+
+      <div class="hud-right">
+        <button id="lang-toggle-btn" class="btn-hud-pill" title="Language">বাংলা / EN</button>
+        <button id="btn-hud-classroom" class="btn-hud-pill" title="Classroom Tour"><span data-i18n="classroomTour">ক্লাসরুম দর্শন</span></button>
+        <button id="btn-hud-restart" class="btn-hud-pill" title="Restart">↺ <span data-i18n="retry">রিস্টার্ট</span></button>
+        <button id="btn-hud-volume" class="btn-hud-pill" title="Volume">ভলিউম</button>
+        <button id="sound-toggle-btn" class="btn-hud-pill" title="Sound"><span data-i18n="soundOn">সাউন্ড চালু</span></button>
+        <button id="btn-hud-menu" class="btn-hud-pill" title="Main Menu"><span data-i18n="mainMenu">মূল মেনু</span></button>
+      </div>
+    </div>
+
+    <!-- Bot Dialogue Bubble -->
+    <div id="dialogue-bubble">
+      <strong>রোল ১:</strong> "আমি কিন্তু স্যাররে বলে দেব!"
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <!-- ==================== NOSTALGIC CLASSROOM TOUR OVERLAY ==================== -->
+    <div id="classroom-tour-overlay">
+      <div class="tour-header">
+        <div class="tour-badge"><span data-i18n="classroomTourTitle">নস্টালজিক স্কুল ক্লাসরুম দর্শন</span></div>
+      </div>
+
+      <div class="tour-bottom-container">
+        <p class="tour-hint" data-i18n="tourHint">চকবোর্ড, হাজিরা খাতা, জানালা, ফ্যান বা বেঞ্চে স্পর্শ করে ক্লাসের স্মৃতি আবিষ্কার করুন</p>
+        <div class="tour-action-bar">
+          <button id="btn-tour-bell" class="btn-tour-action">
+            <span data-i18n="ringBell">ঘণ্টা বাজান</span>
+          </button>
+          <button id="btn-tour-weather" class="btn-tour-action">
+            <span data-i18n="toggleWeather">বৃষ্টি ও আবহাওয়া</span>
+          </button>
+          <button id="btn-tour-fan" class="btn-tour-action">
+            <span data-i18n="toggleFan">ফ্যান নিয়ন্ত্রণ</span>
+          </button>
+          <button id="btn-tour-plane" class="btn-tour-action">
+            <span data-i18n="launchPlane">কাগজের প্লেন</span>
+          </button>
+          <button id="btn-tour-quote" class="btn-tour-action">
+            <span data-i18n="changeQuote">চকবোর্ড উক্তি</span>
+          </button>
+          <button id="btn-tour-volume" class="btn-tour-action">
+            <span data-i18n="volume">ভলিউম</span>
+          </button>
+          <button id="btn-tour-play" class="btn-tour-action btn-tour-primary">
+            <span data-i18n="playBenchGame">পেন ফাইট শুরু করুন</span>
+          </button>
+          <button id="btn-tour-menu" class="btn-tour-action">
+            <span data-i18n="mainMenu">মূল মেনু</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Main Menu Modal -->
+    <div id="main-menu-modal" class="game-modal active">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 data-i18n="gameTitle">স্কুল লাইফ পেন ফাইট</h2>
+          <p data-i18n="subtitle">স্কুল জীবনের নস্টালজিয়া • হাই বেঞ্চের ক্লাসরুম যুদ্ধ</p>
+        </div>
+
+        <div class="menu-options">
+          <button id="btn-play-bot" class="btn-menu">
+            <span data-i18n="vsBot">বনাম ক্লাসরুম বট (১ বনাম ১)</span>
+          </button>
+          <button id="btn-play-2p" class="btn-menu">
+            <span data-i18n="passAndPlay">২ প্লেয়ার (পাস অ্যান্ড প্লে)</span>
+          </button>
+          <button id="btn-campaign" class="btn-menu">
+            <span data-i18n="campaign">লাস্ট বেঞ্চার টুর্নামেন্ট (ক্যাম্পেইন)</span>
+          </button>
+          <button id="btn-trickshots" class="btn-menu">
+            <span data-i18n="trickshots">ট্রিক শট চ্যালেঞ্জ</span>
+          </button>
+          <button id="btn-classroom-view" class="btn-menu btn-menu-special">
+            <span data-i18n="classroomTourBtn">নস্টালজিক ক্লাসরুম দর্শন (ট্যুর)</span>
+          </button>
+          <button id="btn-garage" class="btn-menu">
+            <span data-i18n="garage">পেন ওয়ার্কশপ ও কালেকশন</span>
+          </button>
+          <button id="btn-volume-menu" class="btn-menu">
+            <span data-i18n="volumeSettings">সাউন্ড ও ভলিউম নিয়ন্ত্রণ</span>
+          </button>
+          <button id="btn-rules" class="btn-menu">
+            <span data-i18n="howToPlay">খেলার নিয়মাবলী ও কৌশল</span>
+          </button>
+        </div>
+
+        <div class="menu-footer">
+          <span style="font-size: 12px; color: #b8a892;">Made with nostalgic memories of Bangladeshi Classrooms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance Register Inspect Modal (লাল হাজিরা খাতা) -->
+    <div id="attendance-modal" class="game-modal classroom-inspect-modal">
+      <div class="modal-card register-book-card">
+        <div class="register-cover-ribbon">হাজিরা খাতা • শ্রেণী: দশম • শাখা: ক</div>
+        <div class="modal-header" style="margin-top: 10px; margin-bottom: 16px;">
+          <h2 style="color: #9a483a;">শিক্ষকের লাল হাজিরা খাতা</h2>
+          <p>রোল কলের স্মৃতি ও লাস্ট বেঞ্চারদের হাজিরা স্ট্যাটাস</p>
+        </div>
+
+        <div class="register-table-box">
+          <table class="register-table">
+            <thead>
+              <tr>
+                <th>রোল</th>
+                <th>নাম</th>
+                <th>স্ট্যাটাস</th>
+                <th>শিক্ষকের মন্তব্য</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>০১</td>
+                <td>শাকিল (ফার্স্ট বয়)</td>
+                <td><span class="badge-present">উপস্থিত (P)</span></td>
+                <td>সব প্রশ্নের উত্তর দেয়, ফ্রন্ট বেঞ্চে বসে</td>
+              </tr>
+              <tr>
+                <td>০২</td>
+                <td>রাকিব</td>
+                <td><span class="badge-present">উপস্থিত (P)</span></td>
+                <td>হোমওয়ার্ক সম্পন্ন</td>
+              </tr>
+              <tr>
+                <td>০৭</td>
+                <td>বাবু (লাস্ট বেঞ্চার)</td>
+                <td><span class="badge-late">পেন ফাইট ব্যস্ত!</span></td>
+                <td>ক্লাস চলাকালে টেবিলের নিচে পেন ফাইট খেলতেছিল!</td>
+              </tr>
+              <tr>
+                <td>১৩</td>
+                <td>ফাহিম</td>
+                <td><span class="badge-absent">অনুপস্থিত (A)</span></td>
+                <td>টিফিনের পর দেয়াল টপকে পালালো!</td>
+              </tr>
+              <tr>
+                <td>২১</td>
+                <td>শুভ (মড মাস্টার)</td>
+                <td><span class="badge-present">উপস্থিত (P)</span></td>
+                <td>পেনের ভেতর স্প্রিং আর মোম ঢুকিয়ে ভারি করে!</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="teacher-cane-warning">
+          <strong>স্যারের কড়া সতর্কবাণী:</strong> "ক্লাসে কোনো প্রকার পেন ফাইট চলবে না! যার পেন নিচে পড়বে, তার কান ধরে পুরো পিরিয়ড দাঁড়িয়ে থাকতে হবে!"
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+          <button class="btn-icon btn-close-modal" style="padding: 10px 24px;">খাতা বন্ধ করুন (Close)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bench Carvings Inspect Modal (লাস্ট বেঞ্চের খোদাই ডায়েরি) -->
+    <div id="bench-carvings-modal" class="game-modal classroom-inspect-modal">
+      <div class="modal-card wood-diary-card">
+        <div class="modal-header">
+          <h2 style="color: var(--gold-light);">লাস্ট বেঞ্চের খোদাই ও কাটাকুটি</h2>
+          <p>কম্পাসের কাঁটা আর স্কেল দিয়ে কাঠের টেবিলে লেখা স্কুল জীবনের স্মৃতি</p>
+        </div>
+
+        <div class="carvings-grid">
+          <div class="carving-item">
+            <h4>লাস্ট বেঞ্চের ডন</h4>
+            <p>"দাইন দাইন তিন দাইন - যে জিতবে সেই ফাইন!" (SSC batch 2020)</p>
+          </div>
+          <div class="carving-item">
+            <h4>দোস্ত টিফিন দে!</h4>
+            <p>সিঙ্গাড়া, সমুচা ও আলুর চপ শেয়ার না করলে বন্ধুত্ব বাতিল!</p>
+          </div>
+          <div class="carving-item">
+            <h4>কাটাকুটি চ্যাম্পিয়নশিপ</h4>
+            <p>রোল ১ বনাম রোল ৭ এর মহাকাব্যিক টিক-ট্যাক-টো ম্যাচ!</p>
+          </div>
+          <div class="carving-item">
+            <h4>F L A M E S</h4>
+            <p>নাম লিখে কাটাকাটি করে ভবিষ্যৎ নির্ণয়!</p>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 24px;">
+          <button class="btn-icon btn-close-modal">স্মৃতিগুলো সংরক্ষিত (Close)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bangladesh Map Inspect Modal -->
+    <div id="map-modal" class="game-modal classroom-inspect-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 style="color: var(--sage-light, #7ea889);">ক্লাসরুমের বাংলাদেশ মানচিত্র</h2>
+          <p>সবুজ শ্যামল বাংলাদেশ • আমাদের প্রিয় মাতৃভূমি</p>
+        </div>
+
+        <div style="background: rgba(45, 75, 55, 0.25); border: 1.5px solid #4a7556; border-radius: 6px; padding: 20px; text-align: center; margin-bottom: 20px;">
+          <h3 style="color: #92bfa0; margin-bottom: 8px;">৮টি বিভাগ ও ৬৪টি জেলা</h3>
+          <p style="font-size: 14px; color: #f5eedc; line-height: 1.6;">
+            ঢাকা • চট্টগ্রাম • রাজশাহী • খুলনা • বরিশাল • সিলেট • রংপুর • ময়মনসিংহ<br>
+            প্রতিটি স্কুলের ক্লাসরুমে এই মানচিত্রের সামনে ভূগোল পড়া কতই না মধুর ছিল!
+          </p>
+        </div>
+
+        <div style="text-align: center;">
+          <button class="btn-icon btn-close-modal">ঠিক আছে (Done)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pen Garage & Selection Modal -->
+    <div id="garage-modal" class="game-modal">
+      <div class="modal-card" style="max-width: 840px;">
+        <div class="modal-header">
+          <h2 data-i18n="garage">পেন ওয়ার্কশপ ও কালেকশন</h2>
+          <p>বাংলাদেশের জনপ্রিয় স্কুল পেনসমূহ • আপনার পছন্দের অস্ত্রটি বেছে নিন</p>
+        </div>
+
+        <div id="garage-pen-list" class="garage-grid">
+          <!-- Dynamic Pen Cards injected via ui.js -->
+        </div>
+
+        <div class="modal-header" style="margin-top: 20px; margin-bottom: 0;">
+          <button class="btn-icon btn-close-modal" style="padding: 10px 24px;">সম্পন্ন (Done)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Campaign Modal -->
+    <div id="campaign-modal" class="game-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 data-i18n="campaign">লাস্ট বেঞ্চার টুর্নামেন্ট</h2>
+          <p>ক্লাসের পিরিয়ড পার করে লাস্ট বেঞ্চের ডনকে হারিয়ে চ্যাম্পিয়ন হন</p>
+        </div>
+
+        <div id="campaign-level-list" class="campaign-list">
+          <!-- Dynamic Campaign Levels injected via ui.js -->
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+          <button class="btn-icon btn-close-modal">বন্ধ করুন (Close)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trickshots Modal -->
+    <div id="trickshots-modal" class="game-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 data-i18n="trickshots">ট্রিক শট ও টার্গেট পাজল</h2>
+          <p>স্কেলে রিবাউন্ড ও সুইয়ের মতো পিনপয়েন্ট স্পিন দিয়ে চ্যালেঞ্জ পূরণ করুন</p>
+        </div>
+
+        <div id="trickshot-level-list" class="trickshots-list">
+          <!-- Dynamic Trickshots injected via ui.js -->
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+          <button class="btn-icon btn-close-modal">বন্ধ করুন (Close)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rules & How To Play Modal -->
+    <div id="rules-modal" class="game-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 data-i18n="rulesTitle">পেন ফাইটের স্কুল রুলস</h2>
+          <p>হাই বেঞ্চের ক্লাসিক নিয়মাবলী ও জিতার টেকনিক</p>
+        </div>
+
+        <div class="rules-list">
+          <p data-i18n="rule1">১. পেনের ক্যাপ বা বডিতে আঙুল দিয়ে টেনে পাওয়ার সেট করুন এবং ছেড়ে দিয়ে টোকা মারুন।</p>
+          <p data-i18n="rule2">২. প্রতিপক্ষের পেনকে ধাক্কা দিয়ে হাই-বেঞ্চ (টেবিল) থেকে নিচে ফেলে দিলেই আউট!</p>
+          <p data-i18n="rule3">৩. নিজের পেন টেবিলের বাইরে চলে গেলে ফাউল / আপনি আউট হবেন।</p>
+          <p data-i18n="rule4">৪. পিনের ধার বা ক্যাপের পেছনে টোকা মেরে ঘুরিয়ে (Spin Shot) মারার চেষ্টা করুন!</p>
+          <div style="background: rgba(212, 175, 55, 0.12); border-left: 3px solid var(--gold-accent); padding: 10px 14px; border-radius: 6px; margin-top: 8px;">
+            <strong>প্রো-টিপ (Pro Tip):</strong> ভারী কলম (হিরো ৩২৯ / ইকোনো DX) সহজে ধাক্কা খায় না, আর হালকা পেন (পিনপয়েন্ট / অল-রাউন্ডার) দ্রুত ঘুরে নিখুঁত বাঁকানো শট মারে!
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 24px;">
+          <button class="btn-icon btn-close-modal">বুঝেছি! (Got it)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sound & Volume Settings Modal -->
+    <div id="volume-modal" class="game-modal">
+      <div class="modal-card volume-settings-card">
+        <div class="modal-header">
+          <h2 data-i18n="volumeModalTitle">সাউন্ড ও ভলিউম নিয়ন্ত্রণ</h2>
+          <p data-i18n="volumeModalSubtitle">ক্লাসরুমের নস্টালজিক আওয়াজ ও গেমের শব্দ এডজাস্ট করুন</p>
+        </div>
+
+        <div class="volume-slider-group">
+          <!-- Master Volume -->
+          <div class="volume-slider-row">
+            <div class="slider-header">
+              <span class="slider-label"><span data-i18n="masterVol">মাস্টার ভলিউম (Master)</span></span>
+              <span id="badge-master-vol" class="slider-val-badge">100%</span>
+            </div>
+            <input id="slider-master-volume" class="volume-range-input" type="range" min="0" max="100" value="100" />
+          </div>
+
+          <!-- Classroom Ambience Volume -->
+          <div class="volume-slider-row">
+            <div class="slider-header">
+              <span class="slider-label"><span data-i18n="ambienceVol">ক্লাসরুমের কোলাহল (Classroom Noise)</span></span>
+              <span id="badge-ambience-vol" class="slider-val-badge">85%</span>
+            </div>
+            <input id="slider-ambience-volume" class="volume-range-input" type="range" min="0" max="100" value="85" />
+          </div>
+
+          <!-- SFX Volume -->
+          <div class="volume-slider-row">
+            <div class="slider-header">
+              <span class="slider-label"><span data-i18n="sfxVol">পেনের টোকা ও সাউন্ড এফেক্টস (Game SFX)</span></span>
+              <span id="badge-sfx-vol" class="slider-val-badge">90%</span>
+            </div>
+            <input id="slider-sfx-volume" class="volume-range-input" type="range" min="0" max="100" value="90" />
+          </div>
+        </div>
+
+        <div class="volume-modal-footer">
+          <button id="btn-modal-mute-toggle" class="btn-action" style="padding: 10px 18px;"><span data-i18n="muteToggle">মিউট / আনমিউট</span></button>
+          <button class="btn-action btn-close-modal" style="padding: 10px 22px;" data-i18n="close">বন্ধ করুন</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Over / Victory Modal -->
+    <div id="game-over-modal" class="game-modal">
+      <div class="modal-card game-over-box">
+        <div id="gameover-dain-banner" class="dain-dain-banner">দাইন দাইন তিন দাইন!</div>
+        <h2 id="gameover-title" class="victory-title">আপনি জিতেছেন!</h2>
+        <p id="gameover-msg">৩ পয়েন্ট অর্জন করে বিজয়ী হয়েছেন!</p>
+
+        <div class="game-over-actions">
+          <button id="btn-gameover-restart" class="btn-menu" style="padding: 12px 24px;">
+            ↺ আবার খেলুন
+          </button>
+          <button id="btn-gameover-next" class="btn-menu" style="padding: 12px 24px; display: none;">
+            পরবর্তী ম্যাচ ➔
+          </button>
+          <button id="btn-gameover-menu" class="btn-icon" style="padding: 12px 20px;">
+            মূল মেনু
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Scripts -->
+  <script type="module" src="js/main.js?v=4.0"></script>
+</body>
+</html>
