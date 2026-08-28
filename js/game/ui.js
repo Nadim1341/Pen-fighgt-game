@@ -192,18 +192,13 @@ export class UIManager {
   bindButton(target, callback) {
     const el = typeof target === 'string' ? document.getElementById(target) : target;
     if (!el) return;
-    let lastHandledTime = 0;
-    const handler = (e) => {
-      const now = Date.now();
-      if (now - lastHandledTime < 250) return;
-      lastHandledTime = now;
-      if (e.type === 'touchend') {
-        e.preventDefault();
-      }
+    const trigger = (e) => {
+      e.stopPropagation();
+      this.game.sound.init();
+      this.game.sound.resume();
       callback(e);
     };
-    el.addEventListener('touchend', handler, { passive: false });
-    el.addEventListener('click', handler);
+    el.addEventListener('click', trigger);
   }
 
   bindEvents() {
