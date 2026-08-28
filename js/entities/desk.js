@@ -499,7 +499,6 @@ export class Desk {
 
     ctx.restore();
   }
-  }
 
   drawFrontBenchSeat(ctx, bounds) {
     ctx.save();

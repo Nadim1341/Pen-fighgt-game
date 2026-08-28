@@ -544,15 +544,17 @@ export class UIManager {
       // Render micro preview of pen
       setTimeout(() => {
         const prevCanvas = document.getElementById(`pen-prev-${penId}`);
-        if (prevCanvas) {
+        if (prevCanvas && typeof prevCanvas.getContext === 'function') {
           const ctx = prevCanvas.getContext('2d');
-          ctx.clearRect(0, 0, 160, 40);
-          ctx.save();
-          ctx.translate(80, 20);
-          ctx.scale(0.8, 0.8);
-          // Draw pen horizontally
-          this.game.drawPenStaticPreview(ctx, penId);
-          ctx.restore();
+          if (ctx) {
+            ctx.clearRect(0, 0, 160, 40);
+            ctx.save();
+            ctx.translate(80, 20);
+            ctx.scale(0.8, 0.8);
+            // Draw pen horizontally
+            this.game.drawPenStaticPreview(ctx, penId);
+            ctx.restore();
+          }
         }
       }, 0);
     });

@@ -893,6 +893,8 @@ class PenFightGame {
     };
     requestAnimationFrame(loop);
   }
+}
+
 // Robust Game Instantiation for Desktop and Mobile Browsers
 function initPenFightGame() {
   if (!window.game) {
