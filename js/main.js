@@ -1,15 +1,15 @@
-import { Vector2D } from './physics/vector.js?v=3.0';
-import { PhysicsEngine } from './physics/engine.js?v=3.0';
-import { Pen, PEN_PRESETS } from './entities/pen.js?v=3.0';
-import { Desk } from './entities/desk.js?v=3.0';
-import { Obstacle } from './entities/obstacle.js?v=3.0';
-import { SoundEngine } from './audio/sound.js?v=3.0';
-import { BotAI, BOT_PERSONALITIES } from './ai/bot.js?v=3.0';
-import { UIManager } from './game/ui.js?v=3.0';
-import { CAMPAIGN_LEVELS } from './game/campaign.js?v=3.0';
-import { TRICKSHOT_CHALLENGES } from './game/trickshots.js?v=3.0';
-import { ClassroomIntro } from './classroom_intro.js?v=3.0';
-import { ClassroomViewer } from './game/classroom_viewer.js?v=3.0';
+import { Vector2D } from './physics/vector.js';
+import { PhysicsEngine } from './physics/engine.js';
+import { Pen, PEN_PRESETS } from './entities/pen.js';
+import { Desk } from './entities/desk.js';
+import { Obstacle } from './entities/obstacle.js';
+import { SoundEngine } from './audio/sound.js';
+import { BotAI, BOT_PERSONALITIES } from './ai/bot.js';
+import { UIManager } from './game/ui.js';
+import { CAMPAIGN_LEVELS } from './game/campaign.js';
+import { TRICKSHOT_CHALLENGES } from './game/trickshots.js';
+import { ClassroomIntro } from './classroom_intro.js';
+import { ClassroomViewer } from './game/classroom_viewer.js';
 
 // Polyfill for CanvasRenderingContext2D.roundRect if not supported in older browsers
 if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
@@ -893,9 +893,16 @@ class PenFightGame {
     };
     requestAnimationFrame(loop);
   }
+// Robust Game Instantiation for Desktop and Mobile Browsers
+function initPenFightGame() {
+  if (!window.game) {
+    window.game = new PenFightGame();
+  }
 }
 
-// Instantiate game
-window.addEventListener('DOMContentLoaded', () => {
-  window.game = new PenFightGame();
-});
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initPenFightGame);
+} else {
+  // DOM is already parsed (common in deferred ES6 module scripts)
+  initPenFightGame();
+}

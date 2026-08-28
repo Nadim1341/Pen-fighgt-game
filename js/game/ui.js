@@ -189,105 +189,122 @@ export class UIManager {
     this.renderGarage();
   }
 
+  bindButton(target, callback) {
+    const el = typeof target === 'string' ? document.getElementById(target) : target;
+    if (!el) return;
+    let lastHandledTime = 0;
+    const handler = (e) => {
+      const now = Date.now();
+      if (now - lastHandledTime < 250) return;
+      lastHandledTime = now;
+      if (e.type === 'touchend') {
+        e.preventDefault();
+      }
+      callback(e);
+    };
+    el.addEventListener('touchend', handler, { passive: false });
+    el.addEventListener('click', handler);
+  }
+
   bindEvents() {
     if (this.langToggleBtn) {
-      this.langToggleBtn.addEventListener('click', () => this.toggleLanguage());
+      this.bindButton(this.langToggleBtn, () => this.toggleLanguage());
     }
 
     if (this.soundToggleBtn) {
-      this.soundToggleBtn.addEventListener('click', () => {
+      this.bindButton(this.soundToggleBtn, () => {
         const isMuted = this.game.sound.toggleMute();
         this.soundToggleBtn.innerHTML = `<span data-i18n="${isMuted ? 'soundOff' : 'soundOn'}">${isMuted ? this.t('soundOff') : this.t('soundOn')}</span>`;
       });
     }
 
     // Main Menu Buttons
-    document.getElementById('btn-play-bot')?.addEventListener('click', () => {
+    this.bindButton('btn-play-bot', () => {
       this.is2PlayerMode = false;
       this.hideAllModals();
       this.game.startQuickMatch(this.selectedPlayer1Pen, 'matador_hischool', false, this.selectedBotPersonality);
     });
 
-    document.getElementById('btn-play-2p')?.addEventListener('click', () => {
+    this.bindButton('btn-play-2p', () => {
       this.is2PlayerMode = true;
       this.hideAllModals();
       this.game.startQuickMatch(this.selectedPlayer1Pen, this.selectedPlayer2Pen, true);
     });
 
-    document.getElementById('btn-campaign')?.addEventListener('click', () => {
+    this.bindButton('btn-campaign', () => {
       this.showCampaignModal();
     });
 
-    document.getElementById('btn-trickshots')?.addEventListener('click', () => {
+    this.bindButton('btn-trickshots', () => {
       this.showTrickshotsModal();
     });
 
-    document.getElementById('btn-classroom-view')?.addEventListener('click', () => {
+    this.bindButton('btn-classroom-view', () => {
       this.hideAllModals();
       this.game.openClassroomTour();
     });
 
-    document.getElementById('btn-garage')?.addEventListener('click', () => {
+    this.bindButton('btn-garage', () => {
       this.showGarageModal();
     });
 
-    document.getElementById('btn-volume-menu')?.addEventListener('click', () => {
+    this.bindButton('btn-volume-menu', () => {
       this.showVolumeModal();
     });
 
-    document.getElementById('btn-rules')?.addEventListener('click', () => {
+    this.bindButton('btn-rules', () => {
       this.showRulesModal();
     });
 
     // In-game top buttons
-    document.getElementById('btn-hud-menu')?.addEventListener('click', () => {
+    this.bindButton('btn-hud-menu', () => {
       this.showMainMenu();
     });
 
-    document.getElementById('btn-hud-volume')?.addEventListener('click', () => {
+    this.bindButton('btn-hud-volume', () => {
       this.showVolumeModal();
     });
 
-    document.getElementById('btn-hud-classroom')?.addEventListener('click', () => {
+    this.bindButton('btn-hud-classroom', () => {
       this.hideAllModals();
       this.game.openClassroomTour();
     });
 
-    document.getElementById('btn-hud-restart')?.addEventListener('click', () => {
+    this.bindButton('btn-hud-restart', () => {
       this.game.restartCurrentMode();
     });
 
     // Tour Action Bar Buttons
-    document.getElementById('btn-tour-bell')?.addEventListener('click', () => {
+    this.bindButton('btn-tour-bell', () => {
       this.game.viewer.ringSchoolBell();
     });
 
-    document.getElementById('btn-tour-weather')?.addEventListener('click', () => {
+    this.bindButton('btn-tour-weather', () => {
       this.game.viewer.triggerHotspotAction('window');
     });
 
-    document.getElementById('btn-tour-fan')?.addEventListener('click', () => {
+    this.bindButton('btn-tour-fan', () => {
       this.game.viewer.cycleFanSpeed();
     });
 
-    document.getElementById('btn-tour-plane')?.addEventListener('click', () => {
+    this.bindButton('btn-tour-plane', () => {
       this.game.viewer.triggerHotspotAction('student_aviator');
     });
 
-    document.getElementById('btn-tour-quote')?.addEventListener('click', () => {
+    this.bindButton('btn-tour-quote', () => {
       this.game.viewer.triggerHotspotAction('chalkboard');
     });
 
-    document.getElementById('btn-tour-volume')?.addEventListener('click', () => {
+    this.bindButton('btn-tour-volume', () => {
       this.showVolumeModal();
     });
 
-    document.getElementById('btn-tour-play')?.addEventListener('click', () => {
+    this.bindButton('btn-tour-play', () => {
       this.game.viewer.closeTour();
       this.game.startQuickMatch(this.selectedPlayer1Pen, 'matador_hischool', false, this.selectedBotPersonality);
     });
 
-    document.getElementById('btn-tour-menu')?.addEventListener('click', () => {
+    this.bindButton('btn-tour-menu', () => {
       this.game.viewer.closeTour();
       this.showMainMenu();
     });
@@ -320,7 +337,7 @@ export class UIManager {
       });
     }
 
-    document.getElementById('btn-modal-mute-toggle')?.addEventListener('click', () => {
+    this.bindButton('btn-modal-mute-toggle', () => {
       const isMuted = this.game.sound.toggleMute();
       if (this.soundToggleBtn) {
         this.soundToggleBtn.innerHTML = `<span data-i18n="${isMuted ? 'soundOff' : 'soundOn'}">${isMuted ? this.t('soundOff') : this.t('soundOn')}</span>`;
@@ -329,7 +346,7 @@ export class UIManager {
 
     // Modal Close / Back Buttons
     document.querySelectorAll('.btn-close-modal').forEach(btn => {
-      btn.addEventListener('click', () => {
+      this.bindButton(btn, () => {
         this.hideAllModals();
         if (this.game.state === 'CLASSROOM_VIEW') {
           // Stay in classroom tour if just closing an inspect modal
@@ -342,17 +359,17 @@ export class UIManager {
     });
 
     // Game Over Buttons
-    document.getElementById('btn-gameover-restart')?.addEventListener('click', () => {
+    this.bindButton('btn-gameover-restart', () => {
       this.hideAllModals();
       this.game.restartCurrentMode();
     });
 
-    document.getElementById('btn-gameover-menu')?.addEventListener('click', () => {
+    this.bindButton('btn-gameover-menu', () => {
       this.hideAllModals();
       this.showMainMenu();
     });
 
-    document.getElementById('btn-gameover-next')?.addEventListener('click', () => {
+    this.bindButton('btn-gameover-next', () => {
       this.hideAllModals();
       this.game.nextCampaignLevel();
     });
